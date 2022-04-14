@@ -11,27 +11,18 @@ namespace HashTable
         static void Main(string[] args)
         {
             Console.WriteLine("welcome to Hash table program");
-            MapNode<string, int> myMapNode = new MapNode<string, int>(6);
-            string[] words = { "to", "be", "or", "not", "to", "be" };
-            int count = 1;
-            foreach (string i in words)
+            int key = 0;
+            string paragraphPhrase = "Paranoids are not paranoid because they are paranoid but because they keep putting themselves deliberately into paranoid avoidable situations";
+            string[] paragraph = paragraphPhrase.Split(' ');
+            MyMapNode<int, string> myMapNode = new MyMapNode<int, string>(paragraph.Length);
+            foreach (string word in paragraph)
             {
-                count = myMapNode.CheckHash(i);
-                if (count > 1)
-                {
-                    myMapNode.Add(i,count);
-                }
-                else
-                {
-                    myMapNode.Add(i,1);
-                }
+                myMapNode.Add(key, word);
+                key++;
             }
-               IEnumerable<string> uniqueItems = words.Distinct<string>();
-            foreach (var i in uniqueItems)
-            {
-                myMapNode.Display(i);
-            }
-            Console.ReadLine();
+              Console.WriteLine("frequency of words ");
+             myMapNode.Display();
+                    Console.ReadLine();
         }
     }
 }
