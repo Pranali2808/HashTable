@@ -8,21 +8,38 @@ namespace HashTable
 {
     internal class Program
     {
+        private static int counts;
+
         static void Main(string[] args)
         {
             Console.WriteLine("welcome to Hash table program");
-            int key = 0;
-            string paragraphPhrase = "Paranoids are not paranoid because they are paranoid but because they keep putting themselves deliberately into paranoid avoidable situations";
-            string[] paragraph = paragraphPhrase.Split(' ');
-            MyMapNode<int, string> myMapNode = new MyMapNode<int, string>(paragraph.Length);
-            foreach (string word in paragraph)
+            MapNode<string, int> myMap1 = new MapNode<string, int>(10);
+            string[] paragraph1;
+            string input1 = "Paranoids are not paranoid because they are paranoid but because they keep putting themselves deliberately into paranoid avoidable situations";
+            paragraph1 = input1.Split(' ');
+
+            int count1 = 1;
+            foreach (string i in paragraph1)
             {
-                myMapNode.Add(key, word);
-                key++;
+                counts = myMap1.CheckHash(i);
+                if (count1 > 1)
+                {
+                    myMap1.Add(i, counts);
+                }
+                else
+                {
+                    myMap1.Add(i, 1);
+                }
             }
-              Console.WriteLine("frequency of words ");
-             myMapNode.Display();
-                    Console.ReadLine();
+            IEnumerable<string> unique = paragraph1.Distinct<string>();
+            Console.WriteLine("\nEnter the word which you want to remove in paragraph");
+            string removeWord = Console.ReadLine();
+            myMap1.Remove(removeWord);
+            foreach (var i in unique)
+            {
+                myMap1.Display(i);
+            }
+            Console.ReadLine();
         }
     }
 }

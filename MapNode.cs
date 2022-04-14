@@ -6,136 +6,120 @@ using System.Threading.Tasks;
 
 namespace HashTable
 {
-    class MyMapNode<K, V>
+    public struct KeyValue<K, V>
     {
-        public struct KeyValue<k, v>
-        {
-            public k Key { get; set; }
-            public v Value { get; set; }
-        }
-        private readonly int size;
-        //int[] arr;
-        private readonly LinkedList<KeyValue<K, V>>[] items;
+        public K Key { get; set; }
+        public V Value { get; set; }
+    };
 
-        public MyMapNode(int size)
+    public class MapNode<K, V>
+    {
+        int size;
+        public LinkedList<KeyValue<K, V>>[] items;
+
+        public MapNode(int size)
         {
             this.size = size;
-            //arr=new int[size];
             this.items = new LinkedList<KeyValue<K, V>>[size];
         }
-        protected int GetArrayPosition(K key)
-        {
-            int hash = key.GetHashCode(); //637362
-            int position = hash % size; // 0 to 4
-            return Math.Abs(position);
-        }
 
-        internal int CheckHash(string i)
-        {
-            throw new NotImplementedException();
-        }
 
-        public V Get(K key)
-        {
-            var linkedList = GetArrayPositionAndLinkedList(key);
-            foreach (KeyValue<K, V> item in linkedList)
-            {
-                if (item.Key.Equals(key))
-                    return item.Value;
-            }
-
-            return default(V);
-        }
-
-        internal void Display(string i)
-        {
-            throw new NotImplementedException();
-        }
 
         public void Add(K key, V value)
         {
-            var linkedList = GetArrayPositionAndLinkedList(key);
-            KeyValue<K, V> item = new KeyValue<K, V>()
-            { Key = key, Value = value };
-            if (linkedList.Count != 0)
+            int position = GetArrayPosition(key);
+            LinkedList<KeyValue<K, V>> LinkedListofPosition = GetLinkedListPosition(position);
+            KeyValue<K, V> keyValue = new KeyValue<K, V>()
             {
-                foreach (KeyValue<K, V> item1 in linkedList)
+                Key = key,
+                Value = value
+            };
+            LinkedListofPosition.AddLast(keyValue);
+        }
+
+        internal void Add(string i, object counts)
+        {
+            throw new NotImplementedException();
+        }
+
+        //Step 1: Get array position
+        public int GetArrayPosition(K key)
+        {
+            int hashcode = key.GetHashCode();
+            int position = hashcode % size;
+            return Math.Abs(position);
+        }
+
+        //Step 2: Create linkedlist for a particular position
+        public LinkedList<KeyValue<K, V>> GetLinkedListPosition(int position)
+        {
+            if (items[position] == null)
+            {
+                items[position] = new LinkedList<KeyValue<K, V>>();
+            }
+            return items[position];
+        }
+        // Check if element is already Present
+        public int CheckHash(K key)
+        {
+            int position = GetArrayPosition(key);
+            LinkedList<KeyValue<K, V>> LinkedListofPosition = GetLinkedListPosition(position);
+            int count = 1;
+            bool found = false;
+            KeyValue<K, V> founditem = default(KeyValue<K, V>);
+
+            foreach (KeyValue<K, V> keyValue in LinkedListofPosition)
+            {
+                if (keyValue.Key.Equals(key))
                 {
-                    if (item1.Key.Equals(key))
-                    {
-                        Remove(key);
-                        break;
-                    }
+                    count = Convert.ToInt32(keyValue.Value) + 1;
+                    found = true;
+                    founditem = keyValue;
                 }
             }
-            linkedList.AddLast(item); // to,2
-            // Console.WriteLine(item.Key + " " + item.Value);
-        }
-
-        public bool Exists(K key)
-        {
-            var linkedList = GetArrayPositionAndLinkedList(key);
-            foreach (KeyValue<K, V> item in linkedList)
+            if (found)
             {
-                if (item.Key.Equals(key))
-                {
-                    return true;
-                }
+                LinkedListofPosition.Remove(founditem);
+                return count;
             }
-            return false;
+            else
+            {
+                return 1;
+            }
+
         }
-
-        public LinkedList<KeyValue<K, V>> GetArrayPositionAndLinkedList(K key)
-        {
-            int position = GetArrayPosition(key); //index number of array
-            LinkedList<KeyValue<K, V>> linkedList = GetLinkedList(position);
-            return linkedList;
-        }
-
-
         public void Remove(K key)
         {
-            var linkedList = GetArrayPositionAndLinkedList(key);
+            int position = GetArrayPosition(key);
+            LinkedList<KeyValue<K, V>> linkedList = GetLinkedListPosition(position);
             bool itemFound = false;
-            KeyValue<K, V> foundItem = default(KeyValue<K, V>);
-            foreach (KeyValue<K, V> item in linkedList)
+            KeyValue<K, V> founditem = default(KeyValue<K, V>);
+            foreach (KeyValue<K, V> keyValue in linkedList)
             {
-                if (item.Key.Equals(key))
+                if (keyValue.Key.Equals(key))
                 {
                     itemFound = true;
-                    foundItem = item;
-                    //linkedList.Remove(item);
+                    founditem = keyValue;
                 }
             }
             if (itemFound)
             {
-                linkedList.Remove(foundItem);
-                //Console.WriteLine("Removed successfully with key " + foundItem.Key);
+                linkedList.Remove(founditem);
+
             }
         }
-
-        protected LinkedList<KeyValue<K, V>> GetLinkedList(int position)
+        //Display Linkedlist elements for particular key
+        public void Display(K key)
         {
-            LinkedList<KeyValue<K, V>> linkedList = items[position]; //0
-            if (linkedList == null)
+            int position = GetArrayPosition(key);
+            LinkedList<KeyValue<K, V>> LinkedListofPosition = GetLinkedListPosition(position);
+            foreach (KeyValue<K, V> keyValue in LinkedListofPosition)
             {
-                linkedList = new LinkedList<KeyValue<K, V>>();
-                items[position] = linkedList;
-            }
-            return linkedList;
-        }
+                if (keyValue.Key.Equals(key))
+                {
+                    Console.WriteLine("Key: " + keyValue.Key + "\t Value: " + keyValue.Value);
+                }
 
-        public void Display()
-        {
-            foreach (var linkedList in items)
-            {
-                if (linkedList != null)
-                    foreach (var element in linkedList)
-                    {
-                        string res = element.ToString();
-                        if (res != null)
-                            Console.WriteLine(element.Key + " : " + element.Value);
-                    }
             }
         }
     }
